@@ -50,7 +50,7 @@ class DefaultablesServiceProvider extends ServiceProvider
                  * that starts with default<xxx>.
                  */
                 $defaults = collect(get_class_methods($model))->reject(function ($methodName) {
-                    return !Str::of($methodName)->startsWith('default');
+                    return ! Str::of($methodName)->startsWith('default');
                 });
 
                 if ($defaults->count()) {
@@ -67,14 +67,14 @@ class DefaultablesServiceProvider extends ServiceProvider
                             // This will be a collection of values from $hidden[].
                             $hidden = collect($property->getValue($model));
 
-                            if (!$hidden->contains($attribute)) {
+                            if (! $hidden->contains($attribute)) {
                                 // Assign computed default value.
                                 $model->$attribute = $model->$method();
-                            };
-                        };
-                    };
-                };
-            };
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 }
