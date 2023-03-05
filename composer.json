@@ -1,0 +1,40 @@
+{
+    "name": "brunocfalcao/laravel-defaultables",
+    "description": "Laravel defaultables - Option to have defaults on your eloquent attributes (eloquent.saving event)",
+    "keywords": [
+        "brunocfalcao",
+        "laravel",
+        "eloquent"
+    ],
+    "homepage": "https://github.com/brunocfalcao/brunocfalcao/laravel-defaultables",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Bruno Falcão",
+            "email": "bruno.c.falcao@brunofalcao.me",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/contracts": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brunocfalcao\\Defaultables\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Brunocfalcao\\Defaultables\\DefaultablesServiceProvider"
+            ]
+        }
+    }
+}
