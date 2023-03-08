@@ -50,13 +50,18 @@ class DefaultablesServiceProvider extends ServiceProvider
                  * that starts with default<xxx>.
                  */
                 $defaults = collect(get_class_methods($model))->reject(function ($methodName) {
-                    return ! Str::of($methodName)->startsWith('default');
+                    return ! (Str::of($methodName)
+                                ->startsWith('default') &&
+                            Str::of($methodName)
+                                ->endsWith('Attribute'));
                 });
 
                 if ($defaults->count()) {
                     foreach ($defaults as $method) {
+                        $attribute = strtolower(Str::headline(substr($method, 7, -9)));
+
                         // Compute the attribute name from the method.
-                        $attribute = str_replace(' ', '_', strtolower(Str::headline(substr($method, 7))));
+                        $attribute = str_replace(' ', '_', $attribute);
 
                         if (blank($model->$attribute)) {
                             // Check if the attribute is not part of the hidden[] collection.
