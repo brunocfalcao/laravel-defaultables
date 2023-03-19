@@ -2,12 +2,15 @@
 
 namespace Brunocfalcao\Defaultables;
 
+use Brunocfalcao\Defaultables\Concerns\ConcernsFindingRelationships;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
 class DefaultablesServiceProvider extends ServiceProvider
 {
+    use ConcernsFindingRelationships;
+
     public function boot()
     {
         //
@@ -47,7 +50,7 @@ class DefaultablesServiceProvider extends ServiceProvider
             foreach ($data as $model) {
                 /**
                  * Check the methods list, and verify if there is a method
-                 * that starts with default<xxx>.
+                 * that follows default<your-column-name>Attribute.
                  */
                 $defaults = collect(get_class_methods($model))->reject(function ($methodName) {
                     return ! (Str::of($methodName)
@@ -58,27 +61,23 @@ class DefaultablesServiceProvider extends ServiceProvider
 
                 if ($defaults->count()) {
                     foreach ($defaults as $method) {
-                        $attribute = strtolower(Str::headline(substr($method, 7, -9)));
+                        /**
+                         * Parse the method segment into a valid eloquent
+                         * attribute name (a.k.a. column name).
+                         */
+                        $attribute = Str::headline(substr($method, 7, -9));
 
-                        // Compute the attribute name from the method.
-                        $attribute = str_replace(' ', '_', $attribute);
+                        $column = str_replace(
+                            ' ',
+                            '_',
+                            strtolower($attribute)
+                        );
 
-                        if (blank($model->$attribute)) {
-                            // Check if the attribute is not part of the hidden[] collection.
-                            $reflection = new \ReflectionClass($model);
-                            $property = $reflection->getProperty('hidden');
-                            $property->setAccessible(true);
-
-                            // This will be a collection of values from $hidden[].
-                            $hidden = collect($property->getValue($model));
-
-                            if (! $hidden->contains($attribute)) {
-                                // Assign computed default value.
-                                $model->$attribute = $model->$method();
-                            }
+                        if (blank($model->column)) {
+                            $model->$column = $model->$method();
                         }
                     }
-                }
+                };
             }
         });
     }
