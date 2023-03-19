@@ -77,7 +77,7 @@ class DefaultablesServiceProvider extends ServiceProvider
                             $model->$column = $model->$method();
                         }
                     }
-                };
+                }
             }
         });
     }

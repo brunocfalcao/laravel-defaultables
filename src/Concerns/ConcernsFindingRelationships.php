@@ -3,15 +3,15 @@
 namespace Brunocfalcao\Defaultables\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use InvalidArgumentException;
 
 trait ConcernsFindingRelationships
 {
     public function relationships(bool $showLocalKeys = false, bool $showForeignKeys = false): array
     {
-        if (!($this instanceof Model)) {
-            throw new InvalidArgumentException("This trait can only be used with an Eloquent Model instance.");
+        if (! ($this instanceof Model)) {
+            throw new InvalidArgumentException('This trait can only be used with an Eloquent Model instance.');
         }
 
         $modelClassPath = (new \ReflectionClass($this))->getFileName();
@@ -24,8 +24,8 @@ trait ConcernsFindingRelationships
         $relationships = [];
 
         foreach ($matches as $match) {
-            $relatedClass = $modelNamespace . '\\' . $match[4];
-            if (!class_exists($relatedClass)) {
+            $relatedClass = $modelNamespace.'\\'.$match[4];
+            if (! class_exists($relatedClass)) {
                 $relatedClass = $match[4];
             }
             $relationship = $this->{$match[1]}();
