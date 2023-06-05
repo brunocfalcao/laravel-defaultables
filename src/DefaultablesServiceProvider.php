@@ -2,15 +2,12 @@
 
 namespace Brunocfalcao\Defaultables;
 
-use Brunocfalcao\Defaultables\Concerns\ConcernsFindingRelationships;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
 class DefaultablesServiceProvider extends ServiceProvider
 {
-    use ConcernsFindingRelationships;
-
     public function boot()
     {
         //
@@ -30,7 +27,7 @@ class DefaultablesServiceProvider extends ServiceProvider
          * To be used, the eloquent model should have a default<ColumnName>
          * method. As example:
          *
-         * public function defaultAddress(){
+         * public function defaultAddressAttribute(){
          *     return 'Lisbon';
          * };
          *
@@ -44,7 +41,7 @@ class DefaultablesServiceProvider extends ServiceProvider
          *
          * Finally, good to remember that if you populate the attribute
          * in your observer method, this event will not change that
-         * value. Only if the attribute is blank().
+         * value, only if the attribute is blank().
          */
         Event::listen('eloquent.saving: *', function (string $eventName, array $data) {
             foreach ($data as $model) {
