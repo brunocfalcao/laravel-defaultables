@@ -45,34 +45,18 @@ class DefaultablesServiceProvider extends ServiceProvider
          */
         Event::listen('eloquent.saving: *', function (string $eventName, array $data) {
             foreach ($data as $model) {
-                /**
-                 * Check the methods list, and verify if there is a method
-                 * that follows default<your-column-name>Attribute.
-                 */
-                $defaults = collect(get_class_methods($model))->reject(function ($methodName) {
-                    return ! (Str::of($methodName)
-                                ->startsWith('default') &&
-                            Str::of($methodName)
-                                ->endsWith('Attribute'));
+                // Get methods that follow default<your-column-name>Attribute
+                $methods = array_filter(get_class_methods($model), function ($methodName) {
+                    return preg_match('/^default.*Attribute$/', $methodName);
                 });
 
-                if ($defaults->count()) {
-                    foreach ($defaults as $method) {
-                        /**
-                         * Parse the method segment into a valid eloquent
-                         * attribute name (a.k.a. column name).
-                         */
-                        $attribute = Str::headline(substr($method, 7, -9));
+                foreach ($methods as $method) {
+                    // Convert method name to column name
+                    $attribute = Str::headline(substr($method, 7, -9));
+                    $column = str_replace(' ', '_', strtolower($attribute));
 
-                        $column = str_replace(
-                            ' ',
-                            '_',
-                            strtolower($attribute)
-                        );
-
-                        if (blank($model->column)) {
-                            $model->$column = $model->$method();
-                        }
+                    if (blank($model->$column)) {
+                        $model->$column = $model->$method();
                     }
                 }
             }
